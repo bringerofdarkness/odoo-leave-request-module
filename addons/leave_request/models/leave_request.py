@@ -47,9 +47,9 @@ class LeaveRequest(models.Model):
         tracking=True
     )
 
-    # =====================
-    # WORKFLOW STATE
-    # =====================
+  
+    # Workflow 
+
     status = fields.Selection([
         ("draft", "Draft"),
         ("submitted", "Submitted"),
@@ -78,9 +78,9 @@ class LeaveRequest(models.Model):
             else:
                 rec.total_leave_days = 0
 
-    # =====================
-    # DYNAMIC UI DATE RESTRICTION & VALIDATION
-    # =====================
+
+    # Dynamic UI date restriction 
+
     @api.onchange("start_date", "end_date")
     def _onchange_dates(self):
         if self.start_date and self.end_date:
@@ -145,9 +145,9 @@ class LeaveRequest(models.Model):
                         f"Remaining balance: {max(0, remaining)} days."
                     )
 
-    # =====================
-    # ORM OVERRIDES
-    # =====================
+
+    # ORM overrides
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -175,9 +175,9 @@ class LeaveRequest(models.Model):
                 )
         return super(LeaveRequest, self).unlink()
 
-    # =====================
-    # WORKFLOW ACTIONS
-    # =====================
+
+    # Workflow actions
+
     def action_submit(self):
         for rec in self:
             if rec.status != "draft":
@@ -214,7 +214,7 @@ class LeaveRequest(models.Model):
             rec.status = "approved"
             rec.message_post(body=f"Leave request approved by {self.env.user.name}.")
             
-            # Send Email Notification
+            # Send email notification
             template = self.env.ref("leave_request.mail_template_leave_approved", raise_if_not_found=False)
             if template:
                 template.send_mail(rec.id, force_send=True)
@@ -234,7 +234,7 @@ class LeaveRequest(models.Model):
             rec.status = "rejected"
             rec.message_post(body=f"Leave request rejected by {self.env.user.name}.")
 
-            # Send Email Notification
+            # Send email 
             template = self.env.ref("leave_request.mail_template_leave_rejected", raise_if_not_found=False)
             if template:
                 template.send_mail(rec.id, force_send=True)

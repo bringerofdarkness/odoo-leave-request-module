@@ -396,16 +396,89 @@ How this module can be extended for advanced requirements:
 
 ## Prompt Used for Building This App
 
-Below is the initial instruction prompt used to guide the development and refactoring of this Odoo 17 custom module:
+### Development Methodology
+As a first-time developer in the Odoo framework, I initiated this project by studying YouTube tutorials and Odoo documentation to understand Odoo's Model-View-Controller (MVC) architecture, registry loading, and file structures. Armed with these basics, I manually initialized the custom module directory structure and wrote the initial `__manifest__.py` file to declare dependencies.
 
-> Create a custom Odoo 17 module named `leave_request` that implements a leave management workflow.
-> - Fix the security design conflicts and naming mismatches (consolidate overlapping `ir.rule` definitions in `leave_request_security.xml`, `leave_request_rules.xml`, and `leave_request_groups.xml` into a single clean rule system).
-> - Correct the group reference mismatches (align references to use standard `group_leave_employee` and `group_leave_manager`).
-> - Remove or replace any risky non-standard database overrides (like `_auto_init`) to maintain upgrade safety.
-> - Refactor the data model to replace primitive text employee names with a standard relational Many2one field (`employee_id`) pointing to `hr.employee`.
-> - Include automated workflow triggers (To-Do activities) and formal email notifications templates (on submission, approval, and rejection).
-> - Build smart dashboard reporting (Pivot and Graph analytics) and provide a polished UI/UX experience (using radio buttons, employee avatar bubbles, and font-awesome icons).
-> - Deliver a fully Dockerized setup, a comprehensive `README.md` guide, and robust Python unit tests validating date limits, overlapping requests, and RBAC rules.
+Once the foundation was established, I adopted a collaborative, step-by-step approach using AI assistance to incrementally solve security conflicts, design advanced constraints, and polish the user interface. By prompting the AI sequentially for specific tasks rather than generating the module all at once, I maintained full control over the code quality, verifying and testing each file's compliance with Odoo's native conventions.
+
+The prompting sequence was executed as follows:
+
+#### Step 1: Security Groups & ACL Consolidation
+> **Role & Context**: You are an expert Odoo 17 Security Engineer. I have an Odoo module called `leave_request` with multiple overlapping group and rule definitions spread across `leave_request_security.xml`, `leave_request_rules.xml`, and `leave_request_groups.xml`.
+> 
+> **Objective**: 
+> 1. Consolidate all security groups and record-level rules into a single file: `security/leave_request_security.xml`.
+> 2. Rename the group XML IDs to standard names: `group_leave_employee` (display name: "Leave Employee") and `group_leave_manager` (display name: "Leave Manager").
+> 3. Enforce a record rule where employees can only read/write their own requests or requests where they are the assigned approver, whereas managers have full CRUD access `[(1, '=', 1)]`.
+> 4. Generate the corresponding `security/ir.model.access.csv` mapping all CRUD access rights for the model `leave.request` using the new group IDs.
+> 
+> **Constraints**: Use clean XML syntax, avoid duplicate model rules, and prevent PostgreSQL unique name constraint errors on module installation.
+
+#### Step 2: Relational Data Model & Database Safety
+> **Role & Context**: You are a Senior Odoo Backend Developer. I want to refactor the data model `leave.request` in `models/leave_request.py` to move from primitive text fields to proper relational structures.
+> 
+> **Objective**:
+> 1. Replace the plain Char field `employee_name` with a `Many2one` field `employee_id` pointing to `hr.employee`. Configure it to automatically default to the linked employee profile of the currently logged-in user.
+> 2. Replace the text `approver` field with `approver_id` pointing to `hr.employee`. Restrict the selection dropdown using a domain filter so that only employees linked to users with the `group_leave_manager` security group can be chosen.
+> 3. Locate and delete the non-standard `_auto_init` method override. Explain why database overrides like `_auto_init` are risky in production Odoo environments and how Odoo's default ORM handles schema migrations.
+> 
+> **Constraints**: Keep manifest dependencies updated with `"hr"` and ensure all field attributes (`required`, `tracking`) conform to Odoo 17 standards.
+
+#### Step 3: State Workflows & Activity Automation
+> **Role & Context**: You are a Python Developer specializing in Odoo's Mail and Activities framework. I need to implement a workflow and notification system on my `leave.request` model.
+> 
+> **Objective**:
+> 1. Inherit `mail.thread` and `mail.activity.mixin` inside my python model.
+> 2. Define a `status` field with states: `draft`, `submitted`, `approved`, and `rejected`.
+> 3. Implement buttons inside the XML Form view for Submit, Approve, Reject, and Reset to Draft, setting states correctly in python actions.
+> 4. Write an automated action so that when the employee clicks **Submit**, the system automatically schedules a To-Do activity (`mail.activity`) assigned to the `approver_id`'s user.
+> 5. Write a helper method to automatically mark any pending activities as completed (using `.action_feedback()`) when the manager approves or rejects the request.
+> 
+> **Constraints**: Ensure security groups are applied to the Approve/Reject buttons in XML so they are hidden from regular employees.
+
+#### Step 4: Advanced Database Constraints (Overlapping & Annual Limits)
+> **Role & Context**: You are a Database Architect working on Odoo ORM performance and data integrity.
+> 
+> **Objective**:
+> 1. Write a python `@api.constrains` method `_check_overlapping_leaves` that queries the database to block saving/submitting a leave request if the employee already has an approved or submitted request that overlaps with the new request's dates. Use SQL/ORM overlap logic: `(StartA <= EndB) and (EndA >= StartB)`.
+> 2. Write a second constraint `_check_annual_leave_limit` that sums up all approved leave days for the employee in the current calendar year. If the sum + the new request's days exceeds a maximum limit of **20 days**, throw a `ValidationError` displaying the remaining balance.
+> 
+> **Constraints**: Ensure validation errors are descriptive and target the correct records dynamically to avoid blocking draft or rejected requests.
+
+#### Step 5: Visual BI Reporting & UI/UX Refinement
+> **Role & Context**: You are an Odoo UI/UX Designer and Frontend Specialist. I want to build advanced dashboard interfaces for my custom module.
+> 
+> **Objective**:
+> 1. Update the tree view to use `many2one_avatar_user` widgets to show employee avatar bubbles directly on rows.
+> 2. Build a customized Kanban view where cards show employee profile picture fills, shadows, and inline font-awesome icons for duration, dates, and types.
+> 3. Create a **Pivot View** and a **Graph View (Bar Chart)** displaying total leave days (as the measure) grouped by employee and status to act as a KPI reporting dashboard.
+> 4. Modify the Form view to render the `leave_type` selection field using `widget="radio"` with a horizontal layout, and add a comment icon on the reason tab page.
+> 
+> **Constraints**: Keep XML views well-formed and valid against Odoo 17 RELAX NG schemas.
+
+#### Step 6: Automated Test Suite (TransactionCase)
+> **Role & Context**: You are a QA Automation Engineer specializing in Odoo's test suite.
+> 
+> **Objective**:
+> 1. Create a testing directory (`tests/`) containing `__init__.py` and `test_leave_request.py` subclassing `TransactionCase`.
+> 2. Set up mock users: one Employee, one Manager/Approver, and one Unauthorized Manager.
+> 3. Write unit tests checking:
+>    - Proper leave days computation.
+>    - Workflow transitions from Draft to Submitted (checking activity generation).
+>    - Security rules blocking unauthorized managers from approving.
+>    - Overlapping request prevention throwing ValidationError.
+>    - Annual leave limit threshold blocking approval when it exceeds 20 days.
+> 
+> **Constraints**: Ensure all tests run cleanly inside a test transaction and mock user records are cleared automatically on completion.
+
+---
+
+## 🤖 AI Assistance & Credits
+
+This project was developed and optimized using advanced Large Language Model (LLM) tooling:
+- **Gemini Pro**: Assisted in understanding Odoo 17 project conventions, folder hierarchies, and manifest configurations.
+- **ChatGPT Pro**: Helped design complex SQL/ORM overlapping date algorithms and Odoo test suite declarations.
+- **Antigravity**: Served as the primary agentic AI copilot, executing local tests, updating manifest registrations, resolving PostgreSQL port conflicts, and refining the codebase.
 
 ---
 
