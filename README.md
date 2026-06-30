@@ -1,5 +1,10 @@
 # 🚀 Leave Request Approval Module (Odoo 17)
 
+![Odoo](https://img.shields.io/badge/Odoo-17.0-875A7B?style=for-the-badge&logo=odoo&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+
 A production-style, fully tested **Odoo 17 custom module** that streamlines employee leave management with HR integration, role-based access control (RBAC), automated approval workflows, and analytical reporting.
 
 This project showcases professional Odoo development practices, including ORM modeling, workflow automation, security rules, XML views, automated unit testing, email notification templates, Docker deployment, and reporting dashboards.
@@ -91,7 +96,7 @@ Here are the advanced features implemented in this module that go **beyond the b
 
 ### 🐳 4. Port Isolation & pgAdmin Connectivity
 - Remapped the default PostgreSQL port from `5432` to `5435` inside `.env` to prevent port conflicts with local SQL databases.
-- Allowed pgAdmin 4 to connect seamlessly to Odoo's internal tables.
+- Allowed pgAdmin 4 to connect seamlessly to Odoo's database tables.
 
 ### 📧 5. Dynamic HTML Email Notifications
 - Formatted formal HTML email notification templates inside `data/leave_request_mail_templates.xml` that automatically dispatch to employees and managers during submission and approval/rejection.
