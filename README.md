@@ -129,20 +129,19 @@ graph TD
 
 ## 📸 Screenshots & Video Demo
 
-To display your screenshots and videos on your repository, upload them to a `docs/screenshots/` folder in your project root using the filenames specified below:
+All screenshots are stored in the `assets/` directory of this repository:
 
 | Kanban Workflow Pipeline | Form View with Radio & Avatars |
 |:---:|:---:|
-| ![Kanban View](assets\kanbanview.png) | ![Form View](assets\formview.png) |
+| ![Kanban View](assets/kanbanview.png) | ![Form View](assets/formview.png) |
 
 | Pivot Analytical Table | Graph Visualization |
 |:---:|:---:|
-| ![Pivot View](assets\pivotview.png) | ![Graph View](assets\graphview.png) |
+| ![Pivot View](assets/pivotview.png) | ![Graph View](assets/graphview.png) |
 
 ### 🎥 Full Workflow Demonstration
 
-![Odoo Leave Approval Workflow](docs/screenshots/workflow_demo.gif)
-*(You can view the high-definition recording in [docs/screenshots/workflow_demo.mp4](docs/screenshots/workflow_demo.mp4))*
+*(You can place your workflow demonstration video/GIF inside the `assets/` directory as `workflow_demo.gif` or `workflow_demo.mp4`)*
 
 ---
 
@@ -394,6 +393,19 @@ How this module can be extended for advanced requirements:
 1. **Leave Balance Tracking**: Add a many-to-one relationship to a new `leave.allocation` model to deduct computed leave days from an employee's annual balance and raise a `ValidationError` if the requested days exceed the remaining balance.
 2. **Multi-level Approvals**: Refactor `status` selection to include multiple sub-stages (e.g. `hr_submitted`, `dept_approved`) and dynamically assign Odoo activities to department heads first, and then to HR managers.
 3. **Integration with Odoo Calendar**: Link the leave model with Odoo's default `calendar.event` model to block days off in the company's shared calendar automatically upon approval.
+
+## Prompt Used for Building This App
+
+Below is the initial instruction prompt used to guide the development and refactoring of this Odoo 17 custom module:
+
+> Create a custom Odoo 17 module named `leave_request` that implements a leave management workflow.
+> - Fix the security design conflicts and naming mismatches (consolidate overlapping `ir.rule` definitions in `leave_request_security.xml`, `leave_request_rules.xml`, and `leave_request_groups.xml` into a single clean rule system).
+> - Correct the group reference mismatches (align references to use standard `group_leave_employee` and `group_leave_manager`).
+> - Remove or replace any risky non-standard database overrides (like `_auto_init`) to maintain upgrade safety.
+> - Refactor the data model to replace primitive text employee names with a standard relational Many2one field (`employee_id`) pointing to `hr.employee`.
+> - Include automated workflow triggers (To-Do activities) and formal email notifications templates (on submission, approval, and rejection).
+> - Build smart dashboard reporting (Pivot and Graph analytics) and provide a polished UI/UX experience (using radio buttons, employee avatar bubbles, and font-awesome icons).
+> - Deliver a fully Dockerized setup, a comprehensive `README.md` guide, and robust Python unit tests validating date limits, overlapping requests, and RBAC rules.
 
 ---
 
