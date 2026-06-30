@@ -133,11 +133,11 @@ To display your screenshots and videos on your repository, upload them to a `doc
 
 | Kanban Workflow Pipeline | Form View with Radio & Avatars |
 |:---:|:---:|
-| ![Kanban View](docs/screenshots/kanban.png) | ![Form View](docs/screenshots/form.png) |
+| ![Kanban View](assets\kanbanview.png) | ![Form View](assets\formview.png) |
 
 | Pivot Analytical Table | Graph Visualization |
 |:---:|:---:|
-| ![Pivot View](docs/screenshots/pivot.png) | ![Graph View](docs/screenshots/graph.png) |
+| ![Pivot View](assets\pivotview.png) | ![Graph View](assets\graphview.png) |
 
 ### 🎥 Full Workflow Demonstration
 
