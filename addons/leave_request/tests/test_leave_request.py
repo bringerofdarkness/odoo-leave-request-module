@@ -130,3 +130,54 @@ class TestLeaveRequest(TransactionCase):
         # The assigned approver approves
         request.with_user(self.user_approver).action_approve()
         self.assertEqual(request.status, "approved", "Assigned approver should successfully approve")
+
+    def test_04_overlapping_leaves_prevention(self):
+        """Ensure overlapping leave requests are blocked for the same employee"""
+        # Create first request (approved)
+        request1 = self.env["leave.request"].with_user(self.user_employee).create({
+            "employee_id": self.employee_profile.id,
+            "leave_type": "sick",
+            "start_date": Date.to_date("2026-08-01"),
+            "end_date": Date.to_date("2026-08-05"),
+            "approver_id": self.approver_profile.id,
+        })
+        request1.action_submit()
+        request1.with_user(self.user_approver).action_approve()
+
+        # Try to create an overlapping request (dates overlap with the approved request)
+        with self.assertRaises(ValidationError):
+            request2 = self.env["leave.request"].with_user(self.user_employee).create({
+                "employee_id": self.employee_profile.id,
+                "leave_type": "casual",
+                "start_date": Date.to_date("2026-08-03"), # Overlaps!
+                "end_date": Date.to_date("2026-08-07"),
+                "approver_id": self.approver_profile.id,
+            })
+            request2.action_submit()
+
+    def test_05_annual_leave_limit_prevention(self):
+        """Ensure total approved leave cannot exceed 20 days per year"""
+        # Create a large leave request (15 days) and approve it
+        request1 = self.env["leave.request"].with_user(self.user_employee).create({
+            "employee_id": self.employee_profile.id,
+            "leave_type": "annual",
+            "start_date": Date.to_date("2026-09-01"),
+            "end_date": Date.to_date("2026-09-15"), # 15 days
+            "approver_id": self.approver_profile.id,
+        })
+        request1.action_submit()
+        request1.with_user(self.user_approver).action_approve()
+
+        # Try to approve another request (10 days) -> Total would be 25 (exceeds 20-day limit!)
+        request2 = self.env["leave.request"].with_user(self.user_employee).create({
+            "employee_id": self.employee_profile.id,
+            "leave_type": "casual",
+            "start_date": Date.to_date("2026-09-20"),
+            "end_date": Date.to_date("2026-09-29"), # 10 days
+            "approver_id": self.approver_profile.id,
+        })
+        request2.action_submit()
+
+        # Approval should be blocked by ValidationError
+        with self.assertRaises(ValidationError):
+            request2.with_user(self.user_approver).action_approve()

@@ -9,13 +9,16 @@ This project showcases professional Odoo development practices, including ORM mo
 ## 📋 Table of Contents
 
 - [Features](#features)
+- [Key Enhancements](#key-enhancements)
 - [Technology Stack](#technology-stack)
 - [Project Workflow](#project-workflow)
+- [Screenshots & Video Demo](#screenshots--video-demo)
 - [System Architecture](#system-architecture)
 - [Repository Structure](#repository-structure)
 - [Installation](#installation)
 - [Database Access (pgAdmin 4)](#database-access-pgadmin-4)
 - [Automated Testing](#automated-testing)
+- [Developer Guide (Upgrading Code)](#developer-guide-upgrading-code)
 - [Usage](#usage)
 - [Technical Design](#technical-design)
 - [Security Model](#security-model)
@@ -65,6 +68,36 @@ This project showcases professional Odoo development practices, including ORM mo
 
 ---
 
+## Key Enhancements
+
+Here are the advanced features implemented in this module that go **beyond the basic requirements** to demonstrate production-grade Odoo development and software engineering practices:
+
+### 🧪 1. 100% Automated Unit Testing Suite
+- Implemented a complete Python unit testing suite under `tests/test_leave_request.py` verifying:
+  - Computed durations and date validation boundaries.
+  - Odoo To-Do activity generation and automated completion feedback.
+  - Security role separation and assigned approver validation.
+  - Overlapping date checks and annual leave limit restrictions.
+- Tests can be run inside the Docker container with a single CLI command.
+
+### 🛡️ 2. Intelligent Database Constraints (Business Rules)
+- **Overlapping Leaves Check**: Implemented a database-level `@api.constrains` check that blocks employees from applying for duplicate leaves on overlapping dates.
+- **Annual Leave Limit (20-day limit)**: Restricts employees from receiving approval for more than 20 days of total leave in a calendar year, returning the remaining balance to the manager upon block.
+
+### 🎨 3. Modern UI/UX Polishing
+- **Horizontal Radio Buttons**: Replaced standard dropdowns for leave types with clean, horizontal radio buttons inside the form.
+- **User Avatar Badges**: Utilized `many2one_avatar_user` widgets to show employee profile pictures directly inside list columns and form selections.
+- **Visual Kanban Cards**: Optimized Kanban layout with employee profile picture fills, shadows, and inline font-awesome icons.
+
+### 🐳 4. Port Isolation & pgAdmin Connectivity
+- Remapped the default PostgreSQL port from `5432` to `5435` inside `.env` to prevent port conflicts with local SQL databases.
+- Allowed pgAdmin 4 to connect seamlessly to Odoo's internal tables.
+
+### 📧 5. Dynamic HTML Email Notifications
+- Formatted formal HTML email notification templates inside `data/leave_request_mail_templates.xml` that automatically dispatch to employees and managers during submission and approval/rejection.
+
+---
+
 ## Technology Stack
 
 - **Odoo 17**
@@ -86,6 +119,25 @@ graph TD
     B -->|Reject| D(Rejected)
     D -->|Reset to Draft| A
 ```
+
+---
+
+## 📸 Screenshots & Video Demo
+
+To display your screenshots and videos on your repository, upload them to a `docs/screenshots/` folder in your project root using the filenames specified below:
+
+| Kanban Workflow Pipeline | Form View with Radio & Avatars |
+|:---:|:---:|
+| ![Kanban View](docs/screenshots/kanban.png) | ![Form View](docs/screenshots/form.png) |
+
+| Pivot Analytical Table | Graph Visualization |
+|:---:|:---:|
+| ![Pivot View](docs/screenshots/pivot.png) | ![Graph View](docs/screenshots/graph.png) |
+
+### 🎥 Full Workflow Demonstration
+
+![Odoo Leave Approval Workflow](docs/screenshots/workflow_demo.gif)
+*(You can view the high-definition recording in [docs/screenshots/workflow_demo.mp4](docs/screenshots/workflow_demo.mp4))*
 
 ---
 
@@ -216,6 +268,26 @@ To run the test suite inside the running Docker container, execute:
 ```bash
 docker exec -i odoo_leave_module-web-1 odoo -c /etc/odoo/odoo.conf -d leave_request_db -i leave_request --test-enable --stop-after-init
 ```
+
+---
+
+## Developer Guide (Upgrading Code)
+
+If you modify the source files of this module, follow these steps to apply changes:
+
+### 🐍 Modifying Python Code (`models/` or `tests/`)
+Since Odoo loads Python classes into memory at startup, you must restart the Odoo container before upgrading the module in Odoo's interface:
+```bash
+# 1. Restart the Odoo Web Container
+docker restart odoo_leave_module-web-1
+
+# 2. Upgrade the module in Odoo's UI (under Apps > Upgrade)
+```
+
+### 🎨 Modifying Views / XML Data (`views/` or `data/` or `security/`)
+XML files are loaded directly into the database. You do not need to restart the container, simply run the upgrade in the UI:
+1. Go to **Apps** > search `leave_request`.
+2. Click **Upgrade**.
 
 ---
 
