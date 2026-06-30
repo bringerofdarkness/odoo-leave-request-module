@@ -1,87 +1,283 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- TREE VIEW -->
+    <!-- =====================
+         TREE VIEW
+    ====================== -->
     <record id="view_leave_request_tree" model="ir.ui.view">
         <field name="name">leave.request.tree</field>
         <field name="model">leave.request</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree decoration-info="status == 'submitted'" 
+                  decoration-success="status == 'approved'" 
+                  decoration-danger="status == 'rejected'" 
+                  decoration-muted="status == 'draft'">
                 <field name="name"/>
-                <field name="employee_name"/>
+                <field name="employee_id"/>
                 <field name="leave_type"/>
                 <field name="start_date"/>
                 <field name="end_date"/>
-                <field name="total_days"/>
-                <field name="state"/>
+                <field name="total_leave_days"/>
+                <field name="approver_id"/>
+                <field name="status" widget="badge" 
+                       decoration-info="status == 'submitted'" 
+                       decoration-success="status == 'approved'" 
+                       decoration-danger="status == 'rejected'" 
+                       decoration-muted="status == 'draft'"/>
             </tree>
         </field>
     </record>
 
-    <!-- FORM VIEW -->
+    <!-- =====================
+         KANBAN VIEW
+    ====================== -->
+    <record id="view_leave_request_kanban" model="ir.ui.view">
+        <field name="name">leave.request.kanban</field>
+        <field name="model">leave.request</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="status" quick_create="false">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="leave_type"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="total_leave_days"/>
+                <field name="status"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </strong>
+                                <div class="mt-1 text-muted">
+                                    <span>Employee: </span><strong><field name="employee_id"/></strong>
+                                </div>
+                                <div class="text-muted">
+                                    <span>Type: </span><field name="leave_type"/>
+                                </div>
+                                <div class="text-muted">
+                                    <span>Duration: </span><field name="start_date"/> to <field name="end_date"/>
+                                </div>
+                                <div class="text-muted">
+                                    <span>Total Days: </span><field name="total_leave_days"/>
+                                </div>
+                                <div class="o_kanban_record_bottom mt-2">
+                                    <div class="oe_kanban_bottom_left"/>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="status" widget="badge" 
+                                               decoration-info="status == 'submitted'" 
+                                               decoration-success="status == 'approved'" 
+                                               decoration-danger="status == 'rejected'" 
+                                               decoration-muted="status == 'draft'"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- =====================
+         PIVOT VIEW (KPI / Dashboard)
+    ====================== -->
+    <record id="view_leave_request_pivot" model="ir.ui.view">
+        <field name="name">leave.request.pivot</field>
+        <field name="model">leave.request</field>
+        <field name="arch" type="xml">
+            <pivot string="Leave Analysis">
+                <field name="employee_id" type="row"/>
+                <field name="status" type="col"/>
+                <field name="total_leave_days" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- =====================
+         GRAPH VIEW (Reporting)
+    ====================== -->
+    <record id="view_leave_request_graph" model="ir.ui.view">
+        <field name="name">leave.request.graph</field>
+        <field name="model">leave.request</field>
+        <field name="arch" type="xml">
+            <graph string="Leave Requests Analysis" type="bar">
+                <field name="employee_id" type="row"/>
+                <field name="leave_type" type="col"/>
+                <field name="total_leave_days" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- =====================
+         FORM VIEW
+    ====================== -->
     <record id="view_leave_request_form" model="ir.ui.view">
         <field name="name">leave.request.form</field>
         <field name="model">leave.request</field>
         <field name="arch" type="xml">
             <form>
-
                 <header>
-                    <button name="action_submit" type="object" string="Submit"
+                    <button name="action_submit"
+                            type="object"
+                            string="Submit"
                             class="btn-primary"
-                            invisible="state != 'draft'"/>
+                            invisible="status != 'draft'"/>
 
-                    <button name="action_approve" type="object" string="Approve"
+                    <button name="action_approve"
+                            type="object"
+                            string="Approve"
                             class="btn-success"
-                            invisible="state != 'submitted'"/>
+                            invisible="status != 'submitted'"
+                            groups="leave_request.group_leave_manager"/>
 
-                    <button name="action_reject" type="object" string="Reject"
+                    <button name="action_reject"
+                            type="object"
+                            string="Reject"
                             class="btn-danger"
-                            invisible="state != 'submitted'"/>
+                            invisible="status != 'submitted'"
+                            groups="leave_request.group_leave_manager"/>
 
-                    <button name="action_reset_draft" type="object" string="Reset"
+                    <button name="action_reset_draft"
+                            type="object"
+                            string="Reset to Draft"
                             class="btn-secondary"
-                            invisible="state == 'draft'"/>
+                            invisible="status == 'draft'"/>
 
-                    <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,rejected"/>
+                    <field name="status" widget="statusbar" statusbar_visible="draft,submitted,approved,rejected"/>
                 </header>
 
                 <sheet>
-
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
                     <group>
-                        <field name="name" readonly="1"/>
-                        <field name="employee_name"/>
-                        <field name="leave_type"/>
-                        <field name="approver_name"/>
-                        <field name="state" readonly="1"/>
-                    </group>
+                        <group string="Employee &amp; Workflow">
+                            <!-- Toggle field editing based on User Groups -->
+                            <!-- Regular employees: Read-only Employee field (always locked to their own employee record) -->
+                            <field name="employee_id" 
+                                   groups="!leave_request.group_leave_manager" 
+                                   readonly="1" 
+                                   options="{'no_open': True, 'no_create': True}"/>
+                            
+                            <!-- Managers: Editable Employee field (can request on behalf of others in Draft state) -->
+                            <field name="employee_id" 
+                                   groups="leave_request.group_leave_manager" 
+                                   readonly="status != 'draft'" 
+                                   options="{'no_create': True, 'no_open': True}"/>
 
-                    <group>
-                        <field name="start_date"/>
-                        <field name="end_date"/>
-                        <field name="total_days" readonly="1"/>
+                            <field name="leave_type" readonly="status != 'draft'"/>
+                            <field name="approver_id" options="{'no_create': True, 'no_open': True}" readonly="status != 'draft'"/>
+                        </group>
+                        <group string="Duration">
+                            <field name="start_date" readonly="status != 'draft'"/>
+                            <field name="end_date" readonly="status != 'draft'"/>
+                            <field name="total_leave_days" readonly="1"/>
+                        </group>
                     </group>
-
-                    <group>
-                        <field name="reason"/>
-                    </group>
-
+                    <notebook>
+                        <page string="Reason for Leave" name="reason">
+                            <field name="reason" placeholder="Explain the reason for your leave request..." readonly="status != 'draft'"/>
+                        </page>
+                    </notebook>
                 </sheet>
 
+                <!-- Chatter Support -->
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
 
-    <!-- ACTION -->
+    <!-- =====================
+         SEARCH/FILTER VIEW
+    ====================== -->
+    <record id="view_leave_request_search" model="ir.ui.view">
+        <field name="name">leave.request.search</field>
+        <field name="model">leave.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Reference"/>
+                <field name="employee_id" string="Employee"/>
+                <field name="approver_id" string="Approver"/>
+                
+                <filter name="my_requests" string="My Requests" domain="[('employee_id.user_id', '=', uid)]"/>
+                <filter name="pending_approval" string="Pending Approval" domain="[('status', '=', 'submitted')]"/>
+                <filter name="my_approvals" string="Assigned to Me" domain="[('approver_id.user_id', '=', uid)]"/>
+                <separator/>
+                <filter name="filter_draft" string="Draft" domain="[('status', '=', 'draft')]"/>
+                <filter name="filter_approved" string="Approved" domain="[('status', '=', 'approved')]"/>
+                <filter name="filter_rejected" string="Rejected" domain="[('status', '=', 'rejected')]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_type" string="Leave Type" context="{'group_by': 'leave_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- =====================
+         ACTIONS
+    ====================== -->
+    <!-- Action: All Leave Requests -->
     <record id="action_leave_request" model="ir.actions.act_window">
         <field name="name">Leave Requests</field>
         <field name="res_model">leave.request</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">tree,kanban,pivot,graph,form</field>
+        <field name="search_view_id" ref="view_leave_request_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new leave request!
+            </p>
+            <p>
+                Track employee leave requests, workflow approvals, and durations.
+            </p>
+        </field>
     </record>
 
-    <!-- MENUS -->
-    <menuitem id="menu_leave_root" name="Leave Management"/>
-    <menuitem id="menu_leave_request"
+    <!-- Action: Pending Approvals (Dashboard View) -->
+    <record id="action_leave_request_pending" model="ir.actions.act_window">
+        <field name="name">Pending Approvals</field>
+        <field name="res_model">leave.request</field>
+        <field name="view_mode">tree,kanban,pivot,graph,form</field>
+        <field name="domain">[('status', '=', 'submitted')]</field>
+        <field name="search_view_id" ref="view_leave_request_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No leave requests pending your approval!
+            </p>
+            <p>
+                Any submitted leave requests requiring approval will appear here.
+            </p>
+        </field>
+    </record>
+
+    <!-- =====================
+         MENU ITEMS
+    ====================== -->
+    <!-- Root Menu -->
+    <menuitem id="menu_leave_root" name="Leave Management" sequence="10"/>
+
+    <!-- Submenu: Leave Requests (All) -->
+    <menuitem id="menu_leave_request_all"
               name="Leave Requests"
               parent="menu_leave_root"
-              action="action_leave_request"/>
+              action="action_leave_request"
+              sequence="10"/>
+
+    <!-- Submenu: Pending Approvals -->
+    <menuitem id="menu_leave_request_pending"
+              name="Pending Approvals"
+              parent="menu_leave_root"
+              action="action_leave_request_pending"
+              sequence="20"/>
+
 </odoo>
