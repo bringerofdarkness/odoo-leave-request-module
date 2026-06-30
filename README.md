@@ -139,9 +139,7 @@ All screenshots are stored in the `assets/` directory of this repository:
 |:---:|:---:|
 | ![Pivot View](assets/pivotview.png) | ![Graph View](assets/graphview.png) |
 
-### 🎥 Full Workflow Demonstration
-
-*(You can place your workflow demonstration video/GIF inside the `assets/` directory as `workflow_demo.gif` or `workflow_demo.mp4`)*
+![Odoo Leave Approval Workflow](assets/Odoo-LeaveRequests-GoogleChrome2026-07-0100-13-31-ezgif.com-video-to-gif-converter.gif)
 
 ---
 
