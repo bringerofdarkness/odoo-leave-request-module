@@ -8,6 +8,7 @@
         "security/leave_request_security.xml",
         "security/ir.model.access.csv",
         "data/leave_request_data.xml",
+        "data/leave_request_mail_templates.xml",
         "views/leave_request_views.xml",
     ],
     "demo": [

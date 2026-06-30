@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Template: Submitted -->
+        <record id="mail_template_leave_submitted" model="mail.template">
+            <field name="name">Leave Request: Submitted</field>
+            <field name="model_id" ref="leave_request.model_leave_request"/>
+            <field name="subject">Leave Request Approval Required for {{ object.employee_id.name }}</field>
+            <field name="email_to">{{ object.approver_id.work_email or object.approver_id.user_id.email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; font-size: 14px;">
+                    <p>Hello <t t-out="object.approver_id.name"/>,</p>
+                    <p>A new leave request has been submitted by <strong><t t-out="object.employee_id.name"/></strong> requiring your approval.</p>
+                    <ul>
+                        <li><strong>Leave Type:</strong> <t t-out="object.leave_type"/></li>
+                        <li><strong>Duration:</strong> <t t-out="object.start_date"/> to <t t-out="object.end_date"/> (<t t-out="object.total_leave_days"/> days)</li>
+                    </ul>
+                    <p>Please review and take action in Odoo.</p>
+                </div>
+            </field>
+        </record>
+
+        <!-- Template: Approved -->
+        <record id="mail_template_leave_approved" model="mail.template">
+            <field name="name">Leave Request: Approved</field>
+            <field name="model_id" ref="leave_request.model_leave_request"/>
+            <field name="subject">Leave Request Approved: {{ object.name }}</field>
+            <field name="email_to">{{ object.employee_id.work_email or object.employee_id.user_id.email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; font-size: 14px;">
+                    <p>Hello <t t-out="object.employee_id.name"/>,</p>
+                    <p>Your leave request has been <strong style="color: green;">Approved</strong>.</p>
+                    <ul>
+                        <li><strong>Duration:</strong> <t t-out="object.start_date"/> to <t t-out="object.end_date"/></li>
+                        <li><strong>Approved By:</strong> <t t-out="object.approver_id.name"/></li>
+                    </ul>
+                </div>
+            </field>
+        </record>
+
+        <!-- Template: Rejected -->
+        <record id="mail_template_leave_rejected" model="mail.template">
+            <field name="name">Leave Request: Rejected</field>
+            <field name="model_id" ref="leave_request.model_leave_request"/>
+            <field name="subject">Leave Request Rejected: {{ object.name }}</field>
+            <field name="email_to">{{ object.employee_id.work_email or object.employee_id.user_id.email }}</field>
+            <field name="body_html" type="html">
+                <div style="font-family: Arial, sans-serif; font-size: 14px;">
+                    <p>Hello <t t-out="object.employee_id.name"/>,</p>
+                    <p>Your leave request has been <strong style="color: red;">Rejected</strong>.</p>
+                    <ul>
+                        <li><strong>Duration:</strong> <t t-out="object.start_date"/> to <t t-out="object.end_date"/></li>
+                        <li><strong>Rejected By:</strong> <t t-out="object.approver_id.name"/></li>
+                    </ul>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

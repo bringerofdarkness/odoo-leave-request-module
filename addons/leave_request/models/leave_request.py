@@ -93,13 +93,56 @@ class LeaveRequest(models.Model):
                     }
                 }
 
-    @api.constrains("start_date", "end_date")
+    @api.constrains("start_date", "end_date", "employee_id")
     def _check_dates(self):
         for rec in self:
             if rec.start_date and rec.end_date:
                 if rec.end_date < rec.start_date:
                     raise ValidationError(
                         "End Date cannot be before Start Date."
+                    )
+
+    @api.constrains("start_date", "end_date", "employee_id", "status")
+    def _check_overlapping_leaves(self):
+        for rec in self:
+            if rec.start_date and rec.end_date and rec.employee_id and rec.status in ["submitted", "approved"]:
+                overlapping = self.env["leave.request"].search([
+                    ("employee_id", "=", rec.employee_id.id),
+                    ("id", "!=", rec.id),
+                    ("status", "in", ["submitted", "approved"]),
+                    ("start_date", "<=", rec.end_date),
+                    ("end_date", ">=", rec.start_date),
+                ])
+                if overlapping:
+                    raise ValidationError(
+                        f"Overlapping leave request found! Employee '{rec.employee_id.name}' already has an approved or submitted "
+                        f"leave request ({overlapping[0].name}) from {overlapping[0].start_date} to {overlapping[0].end_date}."
+                    )
+
+    @api.constrains("status", "total_leave_days")
+    def _check_annual_leave_limit(self):
+        for rec in self:
+            if rec.status == "approved":
+                current_year = fields.Date.today().year
+                start_of_year = fields.Date.to_date(f"{current_year}-01-01")
+                end_of_year = fields.Date.to_date(f"{current_year}-12-31")
+                
+                approved_leaves = self.env["leave.request"].search([
+                    ("employee_id", "=", rec.employee_id.id),
+                    ("status", "=", "approved"),
+                    ("start_date", ">=", start_of_year),
+                    ("end_date", "<=", end_of_year),
+                    ("id", "!=", rec.id)
+                ])
+                total_approved_days = sum(approved_leaves.mapped("total_leave_days"))
+                
+                max_limit = 20
+                if total_approved_days + rec.total_leave_days > max_limit:
+                    remaining = max_limit - total_approved_days
+                    raise ValidationError(
+                        f"Leave request cannot be approved. Employee '{rec.employee_id.name}' has already used "
+                        f"{total_approved_days} of their {max_limit} days annual leave limit. "
+                        f"Remaining balance: {max(0, remaining)} days."
                     )
 
     # =====================
@@ -144,6 +187,11 @@ class LeaveRequest(models.Model):
             # Post a message in the chatter
             rec.message_post(body="Leave request submitted for approval.")
 
+            # Send Email Notification
+            template = self.env.ref("leave_request.mail_template_leave_submitted", raise_if_not_found=False)
+            if template:
+                template.send_mail(rec.id, force_send=True)
+
             # Create a notification activity for the assigned approver
             if rec.approver_id and rec.approver_id.user_id:
                 rec.activity_schedule(
@@ -165,6 +213,12 @@ class LeaveRequest(models.Model):
 
             rec.status = "approved"
             rec.message_post(body=f"Leave request approved by {self.env.user.name}.")
+            
+            # Send Email Notification
+            template = self.env.ref("leave_request.mail_template_leave_approved", raise_if_not_found=False)
+            if template:
+                template.send_mail(rec.id, force_send=True)
+
             rec._clear_pending_activities()
 
     def action_reject(self):
@@ -179,6 +233,12 @@ class LeaveRequest(models.Model):
 
             rec.status = "rejected"
             rec.message_post(body=f"Leave request rejected by {self.env.user.name}.")
+
+            # Send Email Notification
+            template = self.env.ref("leave_request.mail_template_leave_rejected", raise_if_not_found=False)
+            if template:
+                template.send_mail(rec.id, force_send=True)
+
             rec._clear_pending_activities()
 
     def action_reset_draft(self):
