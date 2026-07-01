@@ -1,4 +1,4 @@
-# 🚀 Leave Request Approval Module (Odoo 17)
+#  Leave Request Approval Module (Odoo 17)
 
 ![Odoo](https://img.shields.io/badge/Odoo-17.0-875A7B?style=for-the-badge&logo=odoo&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.10-3776AB?style=for-the-badge&logo=python&logoColor=white)
@@ -35,39 +35,39 @@ This project showcases professional Odoo development practices, including ORM mo
 
 ## Features
 
-### 👨💼 Leave Management
+###  Leave Management
 - Create employee leave requests (pre-populated using the active user account)
 - Multi-stage approval workflow (Draft, Submitted, Approved, Rejected)
 - Computed leave duration calculation
 - Reset rejected requests back to draft
 
-### 🏢 HR Integration
+###  HR Integration
 - Uses Odoo's native **`hr.employee`** model
 - Links employees and approvers to official HR records
 - Zero data redundancy
 
-### 🔒 Role-Based Security (RBAC)
+###  Role-Based Security (RBAC)
 - Employee access limited to their own requests or requests assigned to them for approval
 - Managers have full system access
 - UI-level action buttons (Approve/Reject) are hidden from regular employees using group constraints
 
-### 📧 Automated Email Notifications
+###  Automated Email Notifications
 - Automatic email notification dispatched to the assigned approver upon submission
 - Automatic email sent to the employee when their request is approved or rejected
 - Formal HTML email templates built directly into Odoo
 
-### 🤖 Workflow Automation
+###  Workflow Automation
 - Automatic approval activities/tasks generated for approvers upon submission
 - Chatter logs every workflow action and status change
 - Activities are automatically marked as completed after approval or rejection
 
-### 📊 Analytics & Dashboards
+###  Analytics & Dashboards
 - Kanban workflow pipeline grouped by status
 - Pivot table reports
 - Graph chart reports
 - Search filters for common scenarios (My Requests, Pending Approval)
 
-### 🐳 DevOps & Deployment
+###  DevOps & Deployment
 - Fully Dockerized (Odoo 17 + PostgreSQL 15)
 - Quick setup using environment variables via `.env` file
 
@@ -77,7 +77,7 @@ This project showcases professional Odoo development practices, including ORM mo
 
 Here are the advanced features implemented in this module that go **beyond the basic requirements** to demonstrate production-grade Odoo development and software engineering practices:
 
-### 🧪 1. 100% Automated Unit Testing Suite
+###  1. 100% Automated Unit Testing Suite
 - Implemented a complete Python unit testing suite under `tests/test_leave_request.py` verifying:
   - Computed durations and date validation boundaries.
   - Odoo To-Do activity generation and automated completion feedback.
@@ -85,20 +85,20 @@ Here are the advanced features implemented in this module that go **beyond the b
   - Overlapping date checks and annual leave limit restrictions.
 - Tests can be run inside the Docker container with a single CLI command.
 
-### 🛡️ 2. Intelligent Database Constraints (Business Rules)
+###  2. Intelligent Database Constraints (Business Rules)
 - **Overlapping Leaves Check**: Implemented a database-level `@api.constrains` check that blocks employees from applying for duplicate leaves on overlapping dates.
 - **Annual Leave Limit (20-day limit)**: Restricts employees from receiving approval for more than 20 days of total leave in a calendar year, returning the remaining balance to the manager upon block.
 
-### 🎨 3. Modern UI/UX Polishing
+###  3. Modern UI/UX Polishing
 - **Horizontal Radio Buttons**: Replaced standard dropdowns for leave types with clean, horizontal radio buttons inside the form.
 - **User Avatar Badges**: Utilized `many2one_avatar_user` widgets to show employee profile pictures directly inside list columns and form selections.
 - **Visual Kanban Cards**: Optimized Kanban layout with employee profile picture fills, shadows, and inline font-awesome icons.
 
-### 🐳 4. Port Isolation & pgAdmin Connectivity
+###  4. Port Isolation & pgAdmin Connectivity
 - Remapped the default PostgreSQL port from `5432` to `5435` inside `.env` to prevent port conflicts with local SQL databases.
 - Allowed pgAdmin 4 to connect seamlessly to Odoo's database tables.
 
-### 📧 5. Dynamic HTML Email Notifications
+###  5. Dynamic HTML Email Notifications
 - Formatted formal HTML email notification templates inside `data/leave_request_mail_templates.xml` that automatically dispatch to employees and managers during submission and approval/rejection.
 
 ---
@@ -127,7 +127,7 @@ graph TD
 
 ---
 
-## 📸 Screenshots & Video Demo
+##  Screenshots & Video Demo
 
 All screenshots are stored in the `assets/` directory of this repository:
 
@@ -279,7 +279,7 @@ docker exec -i odoo_leave_module-web-1 odoo -c /etc/odoo/odoo.conf -d leave_requ
 
 If you modify the source files of this module, follow these steps to apply changes:
 
-### 🐍 Modifying Python Code (`models/` or `tests/`)
+###  Modifying Python Code (`models/` or `tests/`)
 Since Odoo loads Python classes into memory at startup, you must restart the Odoo container before upgrading the module in Odoo's interface:
 ```bash
 # 1. Restart the Odoo Web Container
@@ -288,7 +288,7 @@ docker restart odoo_leave_module-web-1
 # 2. Upgrade the module in Odoo's UI (under Apps > Upgrade)
 ```
 
-### 🎨 Modifying Views / XML Data (`views/` or `data/` or `security/`)
+###  Modifying Views / XML Data (`views/` or `data/` or `security/`)
 XML files are loaded directly into the database. You do not need to restart the container, simply run the upgrade in the UI:
 1. Go to **Apps** > search `leave_request`.
 2. Click **Upgrade**.
@@ -473,7 +473,7 @@ The prompting sequence was executed as follows:
 
 ---
 
-## 🤖 AI Assistance & Credits
+##  AI Assistance & Credits
 
 This project was developed and optimized using advanced Large Language Model (LLM) tooling:
 - **Gemini Pro**: Assisted in understanding Odoo 17 project conventions, folder hierarchies, and manifest configurations.
@@ -486,4 +486,3 @@ This project was developed and optimized using advanced Large Language Model (LL
 
 **Md. Shahrul Zakaria**
 
-GitHub: [https://github.com/bringerofdarkness](https://github.com/bringerofdarkness)
