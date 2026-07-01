@@ -194,14 +194,23 @@ odoo-leave-request-module/
 ## Installation
 
 ### 1. Prerequisites
-Install the following software:
+Install the following software on your host machine:
 - Docker Desktop
 - Docker Compose
 - pgAdmin 4 (optional, for database inspection)
 
 ---
 
-### 2. Configure Environment Variables
+### 2. Clone the Repository
+Clone the repository using Git and navigate to the project directory:
+```bash
+git clone https://github.com/bringerofdarkness/odoo-leave-request-module.git
+cd odoo-leave-request-module
+```
+
+---
+
+### 3. Configure Environment Variables
 Create a `.env` file in the root directory (a sample is provided):
 ```ini
 ODOO_PORT=8070
@@ -213,7 +222,7 @@ POSTGRES_PASSWORD=odoo
 
 ---
 
-### 3. Start the Application
+### 4. Start the Application
 Run the following command to spin up the Odoo and PostgreSQL containers:
 ```bash
 docker compose up -d
@@ -222,23 +231,23 @@ Odoo will be accessible at `http://localhost:8070`.
 
 ---
 
-### 4. Create a Database (First Run Only)
-On the database creation screen, use the following values:
+### 5. Create a Database (First Run Only)
+On Odoo's database creation screen in your browser, fill in the following values:
 
 | Field | Value |
 |-------|-------|
-| Master Password | Copy the `admin_passwd` value from `config/odoo.conf` (e.g. `admin_passwd`) |
+| Master Password | `admin` (plaintext password configured in `config/odoo.conf`) |
 | Database Name | `leave_request_db` |
 | Email / Login | `admin` |
 | Password | `admin` |
-| Load Demo Data | **Check this box** to load sample employee profiles and leave requests |
+| Load Demo Data | **Check this box** to automatically load sample Bengali employees and leaves |
 
 ---
 
-### 5. Install the Module
-1. Log in as the administrator (`admin`).
+### 6. Install the Module
+1. Log in to Odoo as the administrator (`admin` / `admin`).
 2. Go to **Settings** > scroll to the bottom > click **Activate the developer mode**.
-3. Open the **Apps** menu.
+3. Open the **Apps** menu from the top grid icon.
 4. Click **Update Apps List** in the top navigation bar.
 5. Search for `Leave Request Approval` (technical name: `leave_request`).
 6. Click **Activate** to install.
