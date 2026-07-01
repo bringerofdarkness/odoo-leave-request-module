@@ -210,8 +210,10 @@ cd odoo-leave-request-module
 
 ---
 
-### 3. Configure Environment Variables
-Create a `.env` file in the root directory (a sample is provided):
+### 3. Configure Environment Variables (Optional)
+Creating a `.env` file is optional. If you do not create it, Docker Compose will automatically fall back to the default ports: **`8070`** for Odoo and **`5435`** for PostgreSQL.
+
+If you wish to override these default values, create a `.env` file in the root directory:
 ```ini
 ODOO_PORT=8070
 POSTGRES_PORT=5435
