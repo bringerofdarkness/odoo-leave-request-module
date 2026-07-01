@@ -1,47 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Self-contained Demo Employees (prevents dependency on external demo records) -->
-    <record id="employee_demo_user" model="hr.employee">
-        <field name="name">Marc Demo</field>
-        <field name="user_id" ref="base.user_demo"/>
-        <field name="work_email">demo@example.com</field>
+    <!-- Custom Demo Employees with Bengali names (uses default placeholder initials avatars) -->
+    <record id="employee_shahrul" model="hr.employee">
+        <field name="name">Md. Shahrul Zakaria</field>
+        <field name="work_email">shahrul@example.com</field>
+        <field name="job_title">Senior Developer</field>
     </record>
 
-    <record id="employee_admin_user" model="hr.employee">
-        <field name="name">Mitchell Admin</field>
-        <field name="user_id" ref="base.user_admin"/>
-        <field name="work_email">admin@example.com</field>
+    <record id="employee_rakib" model="hr.employee">
+        <field name="name">Rakib Hasan</field>
+        <field name="work_email">rakib@example.com</field>
+        <field name="job_title">Junior Developer</field>
     </record>
 
-    <!-- Sample Leave Requests referencing the demo employees -->
+    <record id="employee_sadia" model="hr.employee">
+        <field name="name">Sadia Islam</field>
+        <field name="work_email">sadia@example.com</field>
+        <field name="job_title">HR Specialist</field>
+    </record>
+
+    <!-- Sample Leave Requests referencing the custom Bengali employees -->
     <record id="leave_request_demo_1" model="leave.request">
-        <field name="employee_id" ref="employee_demo_user"/>
+        <field name="employee_id" ref="employee_rakib"/>
         <field name="leave_type">sick</field>
         <field name="start_date">2026-07-02</field>
         <field name="end_date">2026-07-03</field>
         <field name="reason">Feeling unwell and need medical rest.</field>
-        <field name="approver_id" ref="employee_admin_user"/>
+        <field name="approver_id" ref="employee_shahrul"/>
         <field name="status">submitted</field>
     </record>
 
     <record id="leave_request_demo_2" model="leave.request">
-        <field name="employee_id" ref="employee_demo_user"/>
+        <field name="employee_id" ref="employee_rakib"/>
         <field name="leave_type">annual</field>
         <field name="start_date">2026-07-15</field>
         <field name="end_date">2026-07-20</field>
         <field name="reason">Annual family trip.</field>
-        <field name="approver_id" ref="employee_admin_user"/>
+        <field name="approver_id" ref="employee_shahrul"/>
         <field name="status">draft</field>
     </record>
 
     <record id="leave_request_demo_3" model="leave.request">
-        <field name="employee_id" ref="employee_admin_user"/>
+        <field name="employee_id" ref="employee_sadia"/>
         <field name="leave_type">casual</field>
         <field name="start_date">2026-06-25</field>
         <field name="end_date">2026-06-26</field>
         <field name="reason">Urgent personal work at home.</field>
-        <field name="approver_id" ref="employee_admin_user"/>
+        <field name="approver_id" ref="employee_shahrul"/>
         <field name="status">approved</field>
     </record>
 
