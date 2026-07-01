@@ -1,54 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Custom Demo Employees with Bengali names (uses default placeholder initials avatars) -->
+  
     <record id="employee_shahrul" model="hr.employee">
         <field name="name">Md. Shahrul Zakaria</field>
         <field name="work_email">shahrul@example.com</field>
-        <field name="job_title">Senior Developer</field>
+        <field name="job_title">Chief Technology Officer</field>
     </record>
 
-    <record id="employee_rakib" model="hr.employee">
-        <field name="name">Rakib Hasan</field>
-        <field name="work_email">rakib@example.com</field>
-        <field name="job_title">Junior Developer</field>
+    <record id="employee_ronaldo" model="hr.employee">
+        <field name="name">Cristiano Ronaldo</field>
+        <field name="work_email">cr7@madrid.com</field>
+        <field name="job_title">Junior Backend Developer</field>
     </record>
 
-    <record id="employee_sadia" model="hr.employee">
-        <field name="name">Sadia Islam</field>
-        <field name="work_email">sadia@example.com</field>
-        <field name="job_title">HR Specialist</field>
+    <record id="employee_messi" model="hr.employee">
+        <field name="name">Lionel Messi</field>
+        <field name="work_email">leo.messi@barca.com</field>
+        <field name="job_title">Senior System Architect</field>
     </record>
 
-    <!-- Sample Leave Requests referencing the custom Bengali employees -->
+    <record id="employee_neymar" model="hr.employee">
+        <field name="name">Neymar Jr</field>
+        <field name="work_email">neymar.santos@santos.com</field>
+        <field name="job_title">UI/UX Designer</field>
+    </record>
+
+    <record id="employee_mbappe" model="hr.employee">
+        <field name="name">Kylian Mbappe</field>
+        <field name="work_email">mbappe@paris.com</field>
+        <field name="job_title">QA Automation Engineer</field>
+    </record>
+
+    <record id="employee_trump" model="hr.employee">
+        <field name="name">Donald Trump</field>
+        <field name="work_email">trump@usa.com</field>
+        <field name="job_title">HR Generalist</field>
+    </record>
+
+
     <record id="leave_request_demo_1" model="leave.request">
-        <field name="employee_id" ref="employee_rakib"/>
-        <field name="leave_type">sick</field>
+        <field name="employee_id" ref="employee_ronaldo"/>
+        <field name="leave_type">casual</field>
+        <field name="start_date">2026-06-15</field>
+        <field name="end_date">2026-06-16</field>
+        <field name="reason">Need a two-day leave to attend a hair transplant checkup and practice my 'SIUUU' celebration in a quiet room without any disturbance.</field>
+        <field name="approver_id" ref="employee_shahrul"/>
+        <field name="status">approved</field>
+    </record>
+
+  
+    <record id="leave_request_demo_2" model="leave.request">
+        <field name="employee_id" ref="employee_messi"/>
+        <field name="leave_type">annual</field>
         <field name="start_date">2026-07-02</field>
-        <field name="end_date">2026-07-03</field>
-        <field name="reason">Feeling unwell and need medical rest.</field>
+        <field name="end_date">2026-07-06</field>
+        <field name="reason">Flying back to Argentina to show my family the World Cup trophy for the 100th time. Also, my giant dog Hulk needs a walk in the park.</field>
+        <field name="approver_id" ref="employee_shahrul"/>
+        <field name="status">approved</field>
+    </record>
+
+   
+    <record id="leave_request_demo_3" model="leave.request">
+        <field name="employee_id" ref="employee_neymar"/>
+        <field name="leave_type">sick</field>
+        <field name="start_date">2026-06-25</field>
+        <field name="end_date">2026-06-28</field>
+        <field name="reason">Sprained my ankle while dancing at my sister's birthday party. The doctor advised strict bed rest, zero physical movement, and 24 hours of CS:GO gaming therapy.</field>
         <field name="approver_id" ref="employee_shahrul"/>
         <field name="status">submitted</field>
     </record>
 
-    <record id="leave_request_demo_2" model="leave.request">
-        <field name="employee_id" ref="employee_rakib"/>
-        <field name="leave_type">annual</field>
-        <field name="start_date">2026-07-15</field>
-        <field name="end_date">2026-07-20</field>
-        <field name="reason">Annual family trip.</field>
+    <record id="leave_request_demo_4" model="leave.request">
+        <field name="employee_id" ref="employee_mbappe"/>
+        <field name="leave_type">casual</field>
+        <field name="start_date">2026-07-10</field>
+        <field name="end_date">2026-07-10</field>
+        <field name="reason">Urgent leave to watch the World Cup match between France and Argentina. Please approve this, boss, or I will sign for Real Madrid tomorrow morning.</field>
+        <field name="approver_id" ref="employee_shahrul"/>
+        <field name="status">submitted</field>
+    </record>
+
+
+    <record id="leave_request_demo_5" model="leave.request">
+        <field name="employee_id" ref="employee_trump"/>
+        <field name="leave_type">unpaid</field>
+        <field name="start_date">2026-07-20</field>
+        <field name="end_date">2026-07-27</field>
+        <field name="reason">Need an unpaid vacation to organize a golf tournament at my resort. It's going to be a huge tournament, the greatest tournament in the history of golf. Believe me.</field>
         <field name="approver_id" ref="employee_shahrul"/>
         <field name="status">draft</field>
     </record>
 
-    <record id="leave_request_demo_3" model="leave.request">
-        <field name="employee_id" ref="employee_sadia"/>
-        <field name="leave_type">casual</field>
-        <field name="start_date">2026-06-25</field>
-        <field name="end_date">2026-06-26</field>
-        <field name="reason">Urgent personal work at home.</field>
+  
+    <record id="leave_request_demo_6" model="leave.request">
+        <field name="employee_id" ref="employee_ronaldo"/>
+        <field name="leave_type">sick</field>
+        <field name="start_date">2026-07-05</field>
+        <field name="end_date">2026-07-05</field>
+        <field name="reason">My vocal cords are completely swollen from yelling 'SIUUU' during yesterday's training session. Doctors advised total vocal and physical rest today.</field>
         <field name="approver_id" ref="employee_shahrul"/>
-        <field name="status">approved</field>
+        <field name="status">draft</field>
     </record>
 
 </odoo>
