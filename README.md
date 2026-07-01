@@ -445,7 +445,7 @@ The prompting sequence was executed as follows:
 > 
 > **Constraints**: Ensure validation errors are descriptive and target the correct records dynamically to avoid blocking draft or rejected requests.
 
-#### Step 5: Visual BI Reporting & UI/UX Refinement
+#### Step 5: Visual Reporting & UI/UX Refinement
 > **Role & Context**: You are an Odoo UI/UX Designer and Frontend Specialist. I want to build advanced dashboard interfaces for my custom module.
 > 
 > **Objective**:
